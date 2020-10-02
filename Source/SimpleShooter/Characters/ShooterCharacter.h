@@ -30,4 +30,9 @@ public:
 private:
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
+	void LookUpRate(float AxisValue);
+	void LookRightRate(float AxisValue);
+
+	UPROPERTY(EditAnywhere, Category="Gamepad Looking Rate")
+		float RotationRate = 70.f;
 };
