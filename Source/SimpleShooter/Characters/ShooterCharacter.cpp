@@ -2,6 +2,8 @@
 
 
 #include "ShooterCharacter.h"
+#include "../Gun.h"
+
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -15,6 +17,11 @@ AShooterCharacter::AShooterCharacter()
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None);
+	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
+	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+	Gun->SetOwner(this);
 	
 }
 
@@ -42,7 +49,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 
-	
+	PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &AShooterCharacter::Shoot);
 }
 
 void AShooterCharacter::LookUpRate(float AxisValue)
@@ -63,6 +70,12 @@ void AShooterCharacter::MoveForward(float AxisValue)
 void AShooterCharacter::MoveRight(float AxisValue)
 {
 	AddMovementInput(GetActorRightVector() * AxisValue);
+}
+
+void AShooterCharacter::Shoot() {
+	if (!Gun) { return; }
+
+	Gun->PullTrigger();
 }
 
 
