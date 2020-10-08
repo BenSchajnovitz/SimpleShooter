@@ -22,6 +22,8 @@ void AShooterCharacter::BeginPlay()
 	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
 	Gun->SetOwner(this);
+
+	Health = MaxHealth;
 	
 }
 
@@ -78,4 +80,17 @@ void AShooterCharacter::Shoot() {
 	Gun->PullTrigger();
 }
 
+float AShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	DamageToApply = FMath::Min(Health, DamageToApply);
+
+	Health -= DamageToApply;
+
+	UE_LOG(LogTemp, Warning, TEXT("Current Health: %f"), Health);
+
+
+	return DamageToApply;
+}
 

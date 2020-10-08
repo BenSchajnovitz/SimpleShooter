@@ -23,6 +23,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -38,6 +40,12 @@ private:
 	UPROPERTY(EditAnywhere, Category="Gamepad Looking Rate")
 		float RotationRate = 70.f;
 
+
+	UPROPERTY(EditDefaultsOnly)
+		float MaxHealth = 100.f;
+
+	UPROPERTY(VisibleAnywhere)
+		float Health;
 
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<AGun> GunClass;
