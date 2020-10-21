@@ -28,6 +28,9 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool isDead() const;
 
+	void Shoot();
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -38,7 +41,6 @@ private:
 	void MoveRight(float AxisValue);
 	void LookUpRate(float AxisValue);
 	void LookRightRate(float AxisValue);
-	void Shoot();
 
 	UPROPERTY(EditAnywhere, Category="Gamepad Looking Rate")
 		float RotationRate = 70.f;
