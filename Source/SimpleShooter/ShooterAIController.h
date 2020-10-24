@@ -26,6 +26,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	bool isDead() const;
 	virtual void Tick(float DeltaTime) override;
 };
 
