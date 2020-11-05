@@ -24,6 +24,10 @@ protected:
 	virtual void BeginPlay() override;
 
 private:	
+
+	bool GunTrace(FHitResult& Hit, FVector ShotDirection);
+	AController* GetOwnerController();
+
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* Root;
 
@@ -34,7 +38,13 @@ private:
 		UParticleSystem* MuzzleFlash;
 
 	UPROPERTY(EditAnywhere)
+		USoundBase* MuzzleSound;
+
+	UPROPERTY(EditAnywhere)
 		UParticleSystem* ImpactParticle;
+
+	UPROPERTY(EditAnywhere)
+		USoundBase* ImpactSound;
 
 	UPROPERTY(EditAnywhere)
 		float MaxRange = 1000.f;

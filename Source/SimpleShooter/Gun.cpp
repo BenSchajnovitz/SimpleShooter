@@ -34,45 +34,62 @@ void AGun::Tick(float DeltaTime)
 
 }
 
-
-void AGun::PullTrigger() {
-	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, Mesh, TEXT("MuzzleFlashSocket"));
-
+AController* AGun::GetOwnerController()
+{
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
-	if (!OwnerPawn) return;
+	if (!OwnerPawn) return nullptr;
 	AController* OwnerController = OwnerPawn->GetController();
-	if (!OwnerController) return;
+	if (!OwnerController) return nullptr;
+
+	return OwnerController;
+}
+
+bool AGun::GunTrace(FHitResult& Hit, FVector ShotDirection)
+{
+	AController* OwnerController = GetOwnerController();
+
+	if (!OwnerController) return false;
 
 	FVector ViewLocation;
 	FRotator ViewRotation;
 
 	OwnerController->GetPlayerViewPoint(ViewLocation, ViewRotation);
+	ShotDirection = -ViewRotation.Vector();
 
 	FVector End = ViewLocation + ViewRotation.Vector() * MaxRange;
-
-	FHitResult Hit;
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 	Params.AddIgnoredActor(GetOwner());
 
-	bool bSuccess = GetWorld()->LineTraceSingleByChannel(
+	return GetWorld()->LineTraceSingleByChannel(
 		Hit,
 		ViewLocation,
 		End,
-		ECollisionChannel::ECC_GameTraceChannel1,  
+		ECollisionChannel::ECC_GameTraceChannel1,
 		Params
 	);
+}
 
-	if (bSuccess)
+void AGun::PullTrigger() {
+	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, Mesh, TEXT("MuzzleFlashSocket"));
+	UGameplayStatics::SpawnSoundAttached(MuzzleSound, Mesh, TEXT("MuzzleFlashSocket"));
+
+	FHitResult Hit;
+	FVector ShotDirection;
+
+	bool bHitSucceed = GunTrace(Hit, ShotDirection);
+
+	if (bHitSucceed)
 	{
-		FVector ShotDirection = -ViewRotation.Vector();
-
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticle, Hit.ImpactPoint, ShotDirection.Rotation());
-	
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, Hit.ImpactPoint);
+
 		AActor* HitActor = Hit.GetActor();
 
 		if (!HitActor) return;
+
+		AController* OwnerController = GetOwnerController();
 
 		FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, nullptr);
 		HitActor->TakeDamage(Damage, DamageEvent, OwnerController, this);

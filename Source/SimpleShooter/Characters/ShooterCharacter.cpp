@@ -76,6 +76,7 @@ void AShooterCharacter::MoveRight(float AxisValue)
 	AddMovementInput(GetActorRightVector() * AxisValue);
 }
 
+
 void AShooterCharacter::Shoot() {
 	if (!Gun) { return; }
 
@@ -111,5 +112,10 @@ float AShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 
 bool AShooterCharacter::isDead() const {
 	return (Health <= 0.f);
+}
+
+float AShooterCharacter::GetHealthPercentage() const
+{
+	return (Health / MaxHealth);
 }
 
